@@ -14,33 +14,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-name "puppetmaster-files"
+name "puppet-library-files"
 
-dependency "puppet-gem"
+dependency "puppet-library-gem"
 
-files_path = File.expand_path("files/puppetmaster", Omnibus.project_root)
+files_path = File.expand_path("files/puppet-library", Omnibus.project_root)
 
-config_dir = "#{install_dir}/embedded/etc/puppet"
-default_dir = "#{install_dir}/embedded/etc/default"
+webapp_dir = "#{install_dir}/embedded/share/puppet-library"
 init_dir = "#{install_dir}/embedded/etc/init.d"
 
 build do
-  # Generate config if it does not exist.
-  command "mkdir -p #{config_dir}"
-  command "rm -f #{config_dir}/*"
-  command "mkdir -p #{config_dir}/environments"
-  command "mkdir -p #{config_dir}/manifests"
-  command "mkdir -p #{config_dir}/modules"
-  command "mkdir -p #{config_dir}/templates"
-  command "cp -a #{files_path}/puppet.conf #{config_dir}/puppet.conf"
+  # Generate webapp directory and copy over config.
+  command "mkdir -p #{webapp_dir}"
+  command "rm -f #{webapp_dir}/*"
+  command "cp -a #{files_path}/config.ru #{webapp_dir}/config.ru"
 
-  # Generate default config if it does not exist.
-  command "mkdir -p #{default_dir}"
-  command "rm -f #{default_dir}/puppet"
-  command "cp -a #{files_path}/puppetmaster.default #{default_dir}/puppetmaster"
+  # Generate Rack directory structure.
+  command "mkdir -p #{webapp_dir}/public"
+  command "mkdir -p #{webapp_dir}/tmp"
 
   # Generate init script if it does not exist.
   command "mkdir -p #{init_dir}"
   command "rm -f #{init_dir}/puppet"
-  command "cp -a #{files_path}/puppetmaster.init #{init_dir}/puppetmaster"
+  command "cp -a #{files_path}/puppet-library.init #{init_dir}/puppet-library"
 end
