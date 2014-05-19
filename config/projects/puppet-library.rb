@@ -38,6 +38,7 @@ dependency 'passenger-gem'
 dependency 'nginx'
 
 #Puppet Library and its dependencies' configuration/misc files
+dependency 'puppet-library-files'
 
 #Version manifest file
 dependency 'version-manifest'
