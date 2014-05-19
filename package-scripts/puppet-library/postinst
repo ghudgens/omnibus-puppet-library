@@ -16,7 +16,7 @@ function error_exit
 
 # Create the "nginx" user if it does not already exist
 if ! getent passwd puplib > /dev/null; then
-  adduser --quiet --system --group --home $VAR_DIR  \
+  adduser --quiet --system --group --home $MOD_DIR  \
     --no-create-home                                 \
     --gecos "Puppet Library daemon" \
     puppet
