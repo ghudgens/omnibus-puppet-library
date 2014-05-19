@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# Perform necessary puppet-library removal steps
+# after package is uninstalled.
+#
+
+echo "puppet-library has been uninstalled!"
+
+exit 0
