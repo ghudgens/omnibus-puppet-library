@@ -1,10 +1,12 @@
 #!/bin/bash
 #
-# Perform necessary puppet-library setup steps
-# after package is installed.
+# Perform necessary puppet-library setup steps after package is installed.
 #
 
 PROGNAME=$(basename $0)
+DEST_DIR="/opt/puppet-library"
+MOD_DIR="/var/lib/modules"
+LOG_DIR="/var/log/puppet-library"
 
 function error_exit
 {
@@ -12,6 +14,27 @@ function error_exit
   exit 1
 }
 
-echo "Thank you for installing puppet-library!"
+# Create the "nginx" user if it does not already exist
+if ! getent passwd puplib > /dev/null; then
+  adduser --quiet --system --group --home $VAR_DIR  \
+    --no-create-home                                 \
+    --gecos "Puppet Library daemon" \
+    puppet
+fi
+
+# Move init script
+echo "Creating /etc/init.d/puppet file"
+rm -f /etc/init.d/puppet-library
+mv $DEST_DIR/embedded/etc/init.d/puppet-library /etc/init.d/puppet-library || error_exit "Cannot move $DEST_DIR/embedded/etc/init.d/puppet-library to /etc/init.d/puppet-library"
+chmod 755 /etc/init.d/puppet-library
+
+# Create module directory
+echo "Creating var directories"
+mkdir -m 755 -p $MOD_DIR || error_exit "Cannot create $MOD_DIR"
+
+# Set correct ownership of puppet directories
+chown puplib:puplib $MOD_DIR || error_exit "Cannot change permissions of $MOD_DIR"
+
+echo "Thank you for installing Puppet Library!"
 
 exit 0
