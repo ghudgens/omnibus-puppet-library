@@ -5,11 +5,17 @@
 #
 
 PROGNAME=$(basename $0)
+DEST_DIR="/opt/puppet-library"
+MOD_DIR="/var/lib/modules"
+LOG_DIR="/var/log/puppet-library"
 
 function error_exit
 {
   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
   exit 1
 }
+
+echo "Stopping puppet-library"
+/etc/init.d/puppet-library stop || error_exit "Cannot stop service"
 
 exit 0

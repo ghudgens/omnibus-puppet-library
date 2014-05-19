@@ -4,6 +4,22 @@
 # after package is uninstalled.
 #
 
+PROGNAME=$(basename $0)
+DEST_DIR="/opt/puppet-library"
+MOD_DIR="/var/lib/modules"
+LOG_DIR="/var/log/puppet-library"
+
+function error_exit
+{
+  echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+  exit 1
+}
+
+# Remove init script
+rm -f /etc/init.d/puppet-library
+# Remove installed directory
+rm -rf $DEST_DIR
+
 echo "puppet-library has been uninstalled!"
 
 exit 0
