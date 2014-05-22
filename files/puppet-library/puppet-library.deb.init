@@ -29,7 +29,7 @@
 NAME="nginx"
 
 # Absolute path to the executable.
-DAEMON="/opt/puppet-library/embedded/${NAME}"
+DAEMON="/opt/puppet-library/embedded/sbin/${NAME}"
 
 # Absolute path to the configuration file.
 CONF_FILE="/opt/puppet-library/embedded/etc/${NAME}/${NAME}.conf"
