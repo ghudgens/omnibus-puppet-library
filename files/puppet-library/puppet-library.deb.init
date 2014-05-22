@@ -1,109 +1,167 @@
 #!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:           puppet-library
+# Required-Start:     $local_fs $remote_fs $network $syslog $named
+# Required-Stop:      $local_fs $remote_fs $network $syslog $named
+# Default-Start:      2 3 4 5
+# Default-Stop:       0 1 6
+# Short-Description:  nginx LSB init script
+# Description:        nginx Linux Standards Base compliant init script.
+### END INIT INFO
+
+
+# -----------------------------------------------------------------------------
+#                                                                      Includes
+# -----------------------------------------------------------------------------
+
+
+# Load the LSB log_* functions.
+. /lib/lsb/init-functions
+
+
+# -----------------------------------------------------------------------------
+#                                                                     Variables
+# -----------------------------------------------------------------------------
+
+
+# The name of the service (must be the first variable).
+NAME="nginx"
+
+# Absolute path to the executable.
+DAEMON="/opt/puppet-library/embedded/${NAME}"
+
+# Absolute path to the configuration file.
+CONF_FILE="/opt/puppet-library/embedded/etc/${NAME}/${NAME}.conf"
+
+# Arguments that should be passed to the executable.
+DAEMON_ARGS=""
+
+# Absolute path to the PID file.
+PIDFILE="/run/${NAME}.pid"
+
+
+# -----------------------------------------------------------------------------
+#                                                                     Bootstrap
+# -----------------------------------------------------------------------------
+
+
+# Check return status of EVERY command
+set -e
+
+# Check if ${NAME} is a file and executable, if not assume it's not installed.
+if [ ! -x ${DAEMON} ]; then
+  log_failure_msg ${NAME} "not installed"
+  exit 1
+fi
+
+# This script is only accessible for root (sudo).
+if [ $(id -u) != 0 ]; then
+  log_failure_msg "super user only!"
+  exit 1
+fi
+
+# Always check if service is already running.
+RUNNING=$(start-stop-daemon --start --quiet --pidfile ${PIDFILE} --exec ${DAEMON} --test && echo "false" || echo "true")
+
+
+# -----------------------------------------------------------------------------
+#                                                                     Functions
+# -----------------------------------------------------------------------------
+
+
+###
+# Reloads the service.
 #
-# puppet-library - this script starts and stops the nginx daemon
+# RETURN:
+#   0 - successfully reloaded
+#   1 - reloading failed
+###
+reload_service() {
+  start-stop-daemon --stop --signal HUP --quiet --pidfile ${PIDFILE} --exec ${DAEMON}
+}
+
+###
+# Starts the service.
 #
-# chkconfig:   - 85 15 
-# description:  Nginx is an HTTP(S) server, HTTP(S) reverse \
-#               proxy and IMAP/POP3 proxy server
-# processname: nginx
-# config:      /opt/puppet-library/embedded/etc/nginx/nginx.conf
-# config:      /opt/puppet-library/embedded/etc/sysconfig/nginx
-# pidfile:     /var/run/nginx.pid
-
-# Source function library.
-. /etc/rc.d/init.d/functions
-
-# Source networking configuration.
-. /opt/puppet-library/embedded/etc/sysconfig/network
-
-# Check that networking is up.
-[ "$NETWORKING" = "no" ] && exit 0
-
-NGINX="/opt/nginx/sbin/nginx"
-prog=$(basename $NGINX)
-
-NGINX_CONF_FILE="/opt/puppet-library/embedded/etc/nginx/nginx.conf"
-LOCKFILE="/var/lock/subsys/nginx"
-
-[ -f /opt/puppet-library/embedded/etc/sysconfig/nginx ] && . /opt/puppet-library/embedded/etc/sysconfig/nginx
-
-start() {
-    [ -x $NGINX ] || exit 5
-    [ -f $NGINX_CONF_FILE ] || exit 6
-    echo -n $"Starting $prog: "
-    daemon $NGINX -c $NGINX_CONF_FILE
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && touch $LOCKFILE
-    return $retval
+# RETURN:
+#   0 - successfully started
+#   1 - starting failed
+###
+start_service() {
+  start-stop-daemon --start --quiet --pidfile ${PIDFILE} --exec ${DAEMON} -- ${DAEMON_ARGS}
 }
 
-stop() {
-    echo -n $"Stopping $prog: "
-    killproc $prog -QUIT
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && rm -f $LOCKFILE
-    return $retval
+###
+# Stops the service.
+#
+# RETURN:
+#   0 - successfully stopped
+#   1 - stopping failed
+###
+stop_service() {
+  start-stop-daemon --stop --quiet --pidfile ${PIDFILE} --name ${NAME}
 }
 
-restart() {
-    configtest || return $?
-    stop
-    sleep 1
-    start
-}
 
-reload() {
-    configtest || return $?
-    echo -n $"Reloading $prog: "
-    killproc $NGINX -HUP
-    RETVAL=$?
-    echo
-}
+# -----------------------------------------------------------------------------
+#                                                                  Handle Input
+# -----------------------------------------------------------------------------
 
-force_reload() {
-    restart
-}
 
-configtest() {
-  $NGINX -t -c $NGINX_CONF_FILE
-}
+case ${1} in
 
-rh_status() {
-    status $prog
-}
+  force-reload|reload)
+    if [ ${RUNNING} = "false" ]; then
+      log_failure_msg ${NAME} "not running"
+    else
+      log_daemon_msg ${NAME} "reloading configuration"
+      reload_service || log_end_msg 1
+      log_end_msg 0
+    fi
+  ;;
 
-rh_status_q() {
-    rh_status >/dev/null 2>&1
-}
+  restart)
+    if [ ${RUNNING} = "false" ]; then
+      log_failure_msg ${NAME} "not running"
+    else
+      log_daemon_msg ${NAME} "restarting"
+      stop_service || log_end_msg 1
+      sleep 0.1
+      start_service || log_end_msg 1
+      log_end_msg 0
+    fi
+  ;;
 
-case "$1" in
-    start)
-        rh_status_q && exit 0
-        $1
-        ;;
-    stop)
-        rh_status_q || exit 0
-        $1
-        ;;
-    restart|configtest)
-        $1
-        ;;
-    reload)
-        rh_status_q || exit 7
-        $1
-        ;;
-    force-reload)
-        force_reload
-        ;;
-    status)
-        rh_status
-        ;;
-    condrestart|try-restart)
-        rh_status_q || exit 0
-            ;;
-    *)
-        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}"
-        exit 2
+  start)
+    if [ ${RUNNING} = "true" ]; then
+      log_success_msg ${NAME} "already started"
+    else
+      log_daemon_msg ${NAME} "starting"
+      start_service || log_end_msg 1
+      log_end_msg 0
+    fi
+  ;;
+
+  status)
+    status_of_proc ${DAEMON} ${NAME} && exit 0 || exit ${?}
+  ;;
+
+  stop)
+    if [ ${RUNNING} = "false" ]; then
+      log_success_msg ${NAME} "already stopped"
+    else
+      log_daemon_msg ${NAME} "stopping"
+      stop_service && log_end_msg 0 || log_end_msg 1
+    fi
+  ;;
+
+  *)
+    echo "Usage: ${NAME} {force-reload|reload|restart|start|status|stop}" >&2
+    exit 1
+  ;;
+
 esac
+:
+
+exit 0
