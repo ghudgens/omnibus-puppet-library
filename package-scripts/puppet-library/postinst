@@ -19,7 +19,7 @@ if ! getent passwd puplib > /dev/null; then
   adduser --quiet --system --group --home $MOD_DIR  \
     --no-create-home                                 \
     --gecos "Puppet Library daemon" \
-    puppet
+    puplib
 fi
 
 # Move init script
