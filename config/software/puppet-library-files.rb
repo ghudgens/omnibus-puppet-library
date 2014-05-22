@@ -25,10 +25,9 @@ webapp_dir = "#{install_dir}/embedded/share/puppet-library"
 config_dir = "#{install_dir}/embedded/etc/nginx"
 init_dir = "#{install_dir}/embedded/etc/init.d"
 
-init_script =
-  case platform
-  when "debian" { "puppet-library.init" }
-  end
+if platform == "debian"
+  init_script = "puppet-library.deb.init"
+end
 
 build do
   # Generate webapp directory and copy over config.
@@ -48,7 +47,9 @@ build do
 
   # TODO: turn this into an erb template
   # Generate init script if it does not exist.
-  command "mkdir -p #{init_dir}"
-  command "rm -f #{init_dir}/puppet"
-  command "cp -a #{files_path}/#{init_script} #{init_dir}/puppet-library"
+  unless init_script.nil?
+    command "mkdir -p #{init_dir}"
+    command "rm -f #{init_dir}/puppet"
+    command "cp -a #{files_path}/#{init_script} #{init_dir}/puppet-library"
+  end
 end
