@@ -23,7 +23,7 @@ if ! getent passwd puplib > /dev/null; then
 fi
 
 # Move init script
-echo "Creating /etc/init.d/puppet file"
+echo "Creating /etc/init.d/puppet-library file"
 rm -f /etc/init.d/puppet-library
 mv $DEST_DIR/embedded/etc/init.d/puppet-library /etc/init.d/puppet-library || error_exit "Cannot move $DEST_DIR/embedded/etc/init.d/puppet-library to /etc/init.d/puppet-library"
 chmod 755 /etc/init.d/puppet-library
