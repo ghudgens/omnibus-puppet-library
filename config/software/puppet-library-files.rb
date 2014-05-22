@@ -25,6 +25,11 @@ webapp_dir = "#{install_dir}/embedded/share/puppet-library"
 config_dir = "#{install_dir}/embedded/etc/nginx"
 init_dir = "#{install_dir}/embedded/etc/init.d"
 
+init_script =
+  case platform
+  when "debian" { "puppet-library.init" }
+  end
+
 build do
   # Generate webapp directory and copy over config.
   command "mkdir -p #{webapp_dir}"
@@ -45,5 +50,5 @@ build do
   # Generate init script if it does not exist.
   command "mkdir -p #{init_dir}"
   command "rm -f #{init_dir}/puppet"
-  command "cp -a #{files_path}/puppet-library.init #{init_dir}/puppet-library"
+  command "cp -a #{files_path}/#{init_script} #{init_dir}/puppet-library"
 end
