@@ -8,7 +8,7 @@ PKGNAME=$(basename)
 DEST_DIR="/opt/puppet-library"
 CONF_DIR="/etc/puppet-library"
 MOD_DIR="/var/lib/modules"
-LOG_DIR="/var/log/puppet-library"
+NGINX_LOG_DIR="/var/log/puppet-library"
 
 function error_exit
 {
@@ -52,10 +52,10 @@ chown nginx:nginx $MOD_DIR || error_exit "Cannot change permissions of $MOD_DIR"
 
 # Create log directory
 echo "Creating log directories"
-mkdir -m 750 -p $LOG_DIR/nginx/ || error_exit "Cannot create $LOG_DIR"
-touch $LOG_DIR/nginx/error.log || error_exit "Cannot create $LOG_DIR/nginx/error.log"
-touch $LOG_DIR/nginx/access.log || error_exit "Cannot create $LOG_DIR/nginx/access.log"
-chown -R nginx:nginx $LOG_DIR || error_exit "Cannot change permissions of $LOG_DIR"
+mkdir -m 750 -p $NGINX_LOG_DIR || error_exit "Cannot create $NGINX_LOG_DIR"
+touch $NGINX_LOG_DIR/error.log || error_exit "Cannot create $NGINX_LOG_DIR/error.log"
+touch $NGINX_LOG_DIR/access.log || error_exit "Cannot create $NGINX_LOG_DIR/access.log"
+chown -R nginx:nginx $NGINX_LOG_DIR || error_exit "Cannot change permissions of $NGINX_LOG_DIR"
 
 echo "Thank you for installing ${PKGNAME}!"
 
