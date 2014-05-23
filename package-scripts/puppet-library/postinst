@@ -4,6 +4,7 @@
 #
 
 PROGNAME=$(basename $0)
+PKGNAME=$(basename)
 DEST_DIR="/opt/puppet-library"
 CONF_DIR="/etc/puppet-library"
 MOD_DIR="/var/lib/modules"
@@ -19,16 +20,28 @@ function error_exit
 if ! getent passwd nginx > /dev/null; then
   adduser --quiet --system --group --home $MOD_DIR  \
     --no-create-home                                 \
-    --gecos "Puppet Library daemon" \
+    --gecos "nginx daemon" \
     nginx
 fi
 
+# Move puppet-library configs
+if [ ! -d $CONF_DIR ]; then
+  echo "Generating puppet-library config"
+  mv $DEST_DIR/embedded/etc/puppet-library $CONF_DIR || error_exit "Cannot move $DEST_DIR/embedded/etc/puppet-library to $CONF_DIR"
+fi
+
+# Move nginx configs
+if [ ! -d /etc/nginx ]; then
+  echo "Generating nginx configs"
+  mv $DEST_DIR/embedded/etc/nginx /etc/nginx || error_exit "Cannot move $DEST_DIR/embedded/etc/nginx to /etc/nginx"
+fi
+
 # Move init script
-if [ -e $DEST_DIR/embedded/etc/init.d/puppet-library ]; then
-  echo "Creating /etc/init.d/puppet-library file"
+if [ -e $DEST_DIR/embedded/etc/init.d/nginx ]; then
+  echo "Creating /etc/init.d/nginx file"
   rm -f /etc/init.d/puppet-library
-  mv $DEST_DIR/embedded/etc/init.d/puppet-library /etc/init.d/puppet-library || error_exit "Cannot move $DEST_DIR/embedded/etc/init.d/puppet-library to /etc/init.d/puppet-library"
-  chmod 755 /etc/init.d/puppet-library
+  mv $DEST_DIR/embedded/etc/init.d/nginx /etc/init.d/nginx || error_exit "Cannot move $DEST_DIR/embedded/etc/init.d/nginx to /etc/init.d/nginx"
+  chmod 755 /etc/init.d/nginx
 fi
 
 # Create module directory
@@ -44,6 +57,6 @@ touch $LOG_DIR/nginx/error.log || error_exit "Cannot create $LOG_DIR/nginx/error
 touch $LOG_DIR/nginx/access.log || error_exit "Cannot create $LOG_DIR/nginx/access.log"
 chown -R nginx:nginx $LOG_DIR || error_exit "Cannot change permissions of $LOG_DIR"
 
-echo "Thank you for installing ${PROGNAME}!"
+echo "Thank you for installing ${PKGNAME}!"
 
 exit 0

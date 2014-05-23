@@ -22,14 +22,16 @@ dependency "nginx"
 files_path = File.expand_path("files/puppet-library", Omnibus.project_root)
 
 webapp_dir = "#{install_dir}/embedded/share/puppet-library"
-config_dir = "#{install_dir}/embedded/etc/nginx"
-init_dir = "#{install_dir}/embedded/etc/init.d"
+config_dir = "#{install_dir}/embedded/etc/puppet-library"
 
 if platform == "debian"
   init_script = "puppet-library.deb.init"
 end
 
 build do
+  # Create puppet-library config directory.
+  command "mkdir -p #{config_dir}"
+
   # Generate webapp directory and copy over config.
   command "mkdir -p #{webapp_dir}"
   command "rm -f #{webapp_dir}/*"
@@ -39,17 +41,4 @@ build do
   command "mkdir -p #{webapp_dir}/public"
   command "mkdir -p #{webapp_dir}/tmp"
 
-  # Remove pre-generated nginx config files and replace them for puppet-library.
-  command "mkdir -p #{config_dir}/sysconfig"
-  command "rm -f #{config_dir}/nginx.conf"
-  command "cp -a #{files_path}/nginx.conf #{config_dir}/nginx.conf"
-  command "cp -a #{files_path}/nginx.sysconfig #{config_dir}/sysconfig/nginx"
-
-  # TODO: turn this into an erb template
-  # Generate init script if it does not exist.
-  unless init_script.nil?
-    command "mkdir -p #{init_dir}"
-    command "rm -f #{init_dir}/puppet"
-    command "cp -a #{files_path}/#{init_script} #{init_dir}/puppet-library"
-  end
 end

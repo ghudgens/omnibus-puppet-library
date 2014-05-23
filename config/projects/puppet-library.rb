@@ -39,6 +39,7 @@ dependency 'nginx'
 
 #Puppet Library and its dependencies' configuration/misc files
 dependency 'puppet-library-files'
+dependency 'nginx-files'
 
 #Version manifest file
 dependency 'version-manifest'
