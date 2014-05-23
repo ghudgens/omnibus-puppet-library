@@ -6,7 +6,7 @@ require "puppet_library"
 server = PuppetLibrary::Server.configure do
     # Serve our private modules out of a directory on disk
     forge :directory do
-        path = "/var/lib/modules"
+        path "/var/lib/modules"
     end
 
     # Download all other modules from the Puppet Forge
