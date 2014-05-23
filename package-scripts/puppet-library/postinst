@@ -5,6 +5,7 @@
 
 PROGNAME=$(basename $0)
 DEST_DIR="/opt/puppet-library"
+CONF_DIR="/etc/puppet-library"
 MOD_DIR="/var/lib/modules"
 LOG_DIR="/var/log/puppet-library"
 
@@ -43,6 +44,6 @@ touch $LOG_DIR/nginx/error.log || error_exit "Cannot create $LOG_DIR/nginx/error
 touch $LOG_DIR/nginx/access.log || error_exit "Cannot create $LOG_DIR/nginx/access.log"
 chown -R nginx:nginx $LOG_DIR || error_exit "Cannot change permissions of $LOG_DIR"
 
-echo "Thank you for installing Puppet Library!"
+echo "Thank you for installing ${PROGNAME}!"
 
 exit 0
