@@ -1,9 +1,10 @@
 user  nginx;
+
 worker_processes  1;
 
-error_log  /var/log/nginx/error.log;
-error_log  /var/log/nginx/error.log  notice;
-error_log  /var/log/nginx/error.log  info;
+error_log  /var/log/<%= @project.name %>/nginx/error.log;
+error_log  /var/log/<%= @project.name %>/nginx/error.log  notice;
+error_log  /var/log/<%= @project.name %>/nginx/error.log  info;
 
 pid        /var/run/nginx.pid;
 
@@ -16,7 +17,7 @@ http {
     include       mime.types;
     default_type  application/octet-stream;
 
-    access_log  /var/log/nginx/access.log;
+    access_log  /var/log/<%= @project.name %>/nginx/access.log;
 
     sendfile        on;
 

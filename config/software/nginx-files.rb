@@ -18,10 +18,11 @@ name "nginx-files"
 
 dependency "nginx"
 
-files_path = File.expand_path("files/nginx", Omnibus.project_root)
-
+files_dir = File.expand_path("files/nginx", Omnibus.project_root)
 config_dir = "#{install_dir}/embedded/etc/nginx"
 init_dir = "#{install_dir}/embedded/etc/init.d"
+
+nginx_config = ERB.new(File.read("#{files_dir}/nginx.conf"))
 
 if platform == "debian"
   init_script = "nginx.deb.init"
@@ -31,14 +32,18 @@ build do
   # Remove pre-generated nginx config files and replace them for puppet-library.
   command "mkdir -p #{config_dir}/sysconfig"
   command "rm -f #{config_dir}/nginx.conf"
-  command "cp -a #{files_path}/nginx.conf #{config_dir}/nginx.conf"
-  command "cp -a #{files_path}/nginx.sysconfig #{config_dir}/sysconfig/nginx"
+  command "cp -a #{files_dir}/nginx.sysconfig #{config_dir}/sysconfig/nginx"
+  command "cp -a #{files_dir}/nginx.conf #{config_dir}/nginx.conf"
+  open("#{config_dir}/nginx.conf", "w") do |file|
+    file.print(nginx_config)
+  end
+  
 
   # TODO: turn this into an erb template
   # Generate init script if it does not exist.
   unless init_script.nil?
     command "mkdir -p #{init_dir}"
     command "rm -f #{init_dir}/nginx"
-    command "cp -a #{files_path}/#{init_script} #{init_dir}/nginx"
+    command "cp -a #{files_dir}/#{init_script} #{init_dir}/nginx"
   end
 end
