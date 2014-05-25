@@ -22,31 +22,33 @@ files_dir = File.expand_path("files/nginx", Omnibus.project_root)
 config_dir = "#{install_dir}/embedded/etc/nginx"
 init_dir = "#{install_dir}/embedded/etc/init.d"
 
-nginx_config = ERB.new(File.read("#{files_dir}/nginx.conf.erb"))
-
 if platform == "debian"
-  init_script = "nginx.deb.init"
+  init_script = "nginx.init.deb.erb"
 end
 
+config_script = "nginx.conf.deb.erb"
+
 build do
-  # Remove pre-generated nginx config files and replace them for puppet-library.
+  # Create directory structure.
   command "mkdir -p #{config_dir}/sysconfig"
-  command "rm -f #{config_dir}/nginx.conf"
-  command "cp -a #{files_dir}/nginx.sysconfig #{config_dir}/sysconfig/nginx"
-  command "cp -a #{files_dir}/nginx.conf #{config_dir}/nginx.conf"
+  command "mkdir -p #{init_dir}"
 
+  # Create config file and init script
   block do
-    File.open("#{config_dir}/nginx.conf", "w") do |file|
-      file.print(nginx_config)
+    unless init_script.nil?
+      command "rm -f #{config_dir}/nginx.conf"
+      nginx_config = ERB.new(File.read("#{files_dir}/#{config_script}"))
+      File.open("#{config_dir}/nginx.conf", "w") do |file|
+        file.print(nginx_config)
+      end
     end
-  end
-  
 
-  # TODO: turn this into an erb template
-  # Generate init script if it does not exist.
-  unless init_script.nil?
-    command "mkdir -p #{init_dir}"
-    command "rm -f #{init_dir}/nginx"
-    command "cp -a #{files_dir}/#{init_script} #{init_dir}/nginx"
+    unless init_script.nil?
+      command "rm -f #{init_dir}/nginx"
+      nginx_init = ERB.new(File.read("#{files_dir}/#{init_script}"))
+      File.open("#{init_dir}/nginx", "w") do |file|
+        file.print(nginx_init)
+      end
+    end
   end
 end
