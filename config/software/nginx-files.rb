@@ -22,7 +22,7 @@ files_dir = File.expand_path("files/nginx", Omnibus.project_root)
 config_dir = "#{install_dir}/embedded/etc/nginx"
 init_dir = "#{install_dir}/embedded/etc/init.d"
 
-nginx_config = ERB.new(File.read("#{files_dir}/nginx.conf"))
+nginx_config = ERB.new(File.read("#{files_dir}/nginx.conf.erb"))
 
 if platform == "debian"
   init_script = "nginx.deb.init"
@@ -34,7 +34,7 @@ build do
   command "rm -f #{config_dir}/nginx.conf"
   command "cp -a #{files_dir}/nginx.sysconfig #{config_dir}/sysconfig/nginx"
   command "cp -a #{files_dir}/nginx.conf #{config_dir}/nginx.conf"
-  open("#{config_dir}/nginx.conf", "w") do |file|
+  File.open("#{config_dir}/nginx.conf", "w") do |file|
     file.print(nginx_config)
   end
   
