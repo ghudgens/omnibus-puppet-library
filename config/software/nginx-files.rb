@@ -34,8 +34,11 @@ build do
   command "rm -f #{config_dir}/nginx.conf"
   command "cp -a #{files_dir}/nginx.sysconfig #{config_dir}/sysconfig/nginx"
   command "cp -a #{files_dir}/nginx.conf #{config_dir}/nginx.conf"
-  File.open("#{config_dir}/nginx.conf", "w") do |file|
-    file.print(nginx_config)
+
+  block do
+    File.open("#{config_dir}/nginx.conf", "w") do |file|
+      file.print(nginx_config)
+    end
   end
   
 
