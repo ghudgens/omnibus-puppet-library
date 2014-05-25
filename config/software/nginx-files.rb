@@ -26,7 +26,7 @@ if platform == "debian"
   init_script = "nginx.init.deb.erb"
 end
 
-config_script = "nginx.conf.deb.erb"
+config_script = "nginx.conf.erb"
 
 build do
   # Create directory structure.
@@ -35,11 +35,13 @@ build do
 
   # Create config file and init script
   block do
+    project_name = project.name
+
     unless init_script.nil?
-      command "rm -f #{config_dir}/nginx.conf"
-      nginx_config = ERB.new(File.read("#{files_dir}/#{config_script}"))
+      template_file = File.open("#{files_dir}/#{config_script}", "r").read
+      nginx_config = ERB.new(template_file)
       File.open("#{config_dir}/nginx.conf", "w") do |file|
-        file.print(nginx_config)
+        file.print(nginx_config.result(binding))
       end
     end
 
