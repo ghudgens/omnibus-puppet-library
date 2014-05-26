@@ -17,7 +17,6 @@
 name "puppet-library-files"
 
 dependency "puppet-library-gem"
-dependency "nginx"
 dependency "nginx-files"
 
 files_dir = File.expand_path("files/puppet-library", Omnibus.project_root)
