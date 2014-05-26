@@ -35,7 +35,7 @@ DAEMON="<%= project_name %>/embedded/sbin/${NAME}"
 CONF_FILE="<%= project_name %>/embedded/etc/${NAME}/${NAME}.conf"
 
 # Arguments that should be passed to the executable.
-DAEMON_ARGS=""
+DAEMON_ARGS="-c ${CONF_FILE}"
 
 # Absolute path to the PID file.
 PIDFILE="/var/run/${NAME}.pid"
