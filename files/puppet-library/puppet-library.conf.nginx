@@ -1,0 +1,9 @@
+server {
+  listen       *:80;
+  server_name  localhost;
+
+  root <%= install_dir  %>/embedded/share/<%= project_name %>/public;
+
+  passenger_enabled on;
+
+}

@@ -39,9 +39,10 @@ build do
   command "mkdir -p #{config_dir}/conf.d"
   command "mkdir -p #{init_dir}"
 
-  # Create config file and init script
+  # Create config files and init script
+  command "cp -a #{files_dir}/mime.types #{config_dir}/"
   block do
-    unless init_script.nil?
+    unless config_script.nil?
       template_file = File.open("#{files_dir}/#{config_script}", "r").read
       nginx_config = ERB.new(template_file)
       File.open("#{config_dir}/nginx.conf", "w") do |file|
