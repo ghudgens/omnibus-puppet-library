@@ -56,6 +56,7 @@ build do
       File.open("#{init_dir}/nginx", "w") do |file|
         file.print(nginx_init.result(binding))
       end
+      File.chmod(0755, "#{init_dir}/nginx")
     end
   end
 end

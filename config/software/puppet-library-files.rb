@@ -32,11 +32,12 @@ project_name = project.name
 build do
   # Create puppet-library config directory.
   command "mkdir -p #{config_dir}"
+  command "cp -a #{files_dir}/puppet-library-config.yml #{webapp_dir}/"
 
   # Generate webapp directory and copy over config.
   command "mkdir -p #{webapp_dir}"
   command "rm -f #{webapp_dir}/*"
-  command "cp -a #{files_dir}/config.ru #{webapp_dir}/config.ru"
+  command "cp -a #{files_dir}/config.ru #{webapp_dir}/"
 
   # Generate Rack directory structure.
   command "mkdir -p #{webapp_dir}/public"
