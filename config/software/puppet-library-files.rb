@@ -19,14 +19,15 @@ name "puppet-library-files"
 dependency "puppet-library-gem"
 dependency "nginx"
 
-files_path = File.expand_path("files/puppet-library", Omnibus.project_root)
-
+files_dir = File.expand_path("files/puppet-library", Omnibus.project_root)
 webapp_dir = "#{install_dir}/embedded/share/puppet-library"
 config_dir = "#{install_dir}/embedded/etc/puppet-library"
 
-if platform == "debian"
-  init_script = "puppet-library.deb.init"
-end
+# Grab the ruby and passenger-gem components as we will be using them in the configure
+ruby_cmpt = project.library.components.find { |c| c.name == 'ruby' }
+pgem_cmpt = project.library.components.find { |c| c.name == 'passenger-gem' }
+
+project_name = project.name
 
 build do
   # Create puppet-library config directory.
@@ -35,10 +36,17 @@ build do
   # Generate webapp directory and copy over config.
   command "mkdir -p #{webapp_dir}"
   command "rm -f #{webapp_dir}/*"
-  command "cp -a #{files_path}/config.ru #{webapp_dir}/config.ru"
+  command "cp -a #{files_dir}/config.ru #{webapp_dir}/config.ru"
 
   # Generate Rack directory structure.
   command "mkdir -p #{webapp_dir}/public"
   command "mkdir -p #{webapp_dir}/tmp"
 
+  block do
+    template_file = File.open("#{files_dir}/puppet-library.conf.nginx.erb", "r").read
+    nginx_config = ERB.new(template_file)
+    File.open("#{install_dir}/embedded/etc/nginx/conf/conf.d/puppet-library.conf", "w") do |file|
+      file.print(nginx_config.result(binding))
+    end
+  end
 end

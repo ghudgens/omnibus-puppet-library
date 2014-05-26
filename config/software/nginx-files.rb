@@ -26,6 +26,8 @@ init_dir = "#{install_dir}/embedded/etc/init.d"
 ruby_cmpt = project.library.components.find { |c| c.name == 'ruby' }
 pgem_cmpt = project.library.components.find { |c| c.name == 'passenger-gem' }
 
+project_name = project.name
+
 if platform == "debian"
   init_script = "nginx.init.deb.erb"
 end
@@ -35,12 +37,11 @@ config_script = "nginx.conf.erb"
 build do
   # Create directory structure.
   command "mkdir -p #{config_dir}"
+
   command "mkdir -p #{init_dir}"
 
   # Create config file and init script
   block do
-    project_name = project.name
-
     unless init_script.nil?
       template_file = File.open("#{files_dir}/#{config_script}", "r").read
       nginx_config = ERB.new(template_file)
