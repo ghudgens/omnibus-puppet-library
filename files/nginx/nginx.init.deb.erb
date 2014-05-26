@@ -29,10 +29,10 @@
 NAME="nginx"
 
 # Absolute path to the executable.
-DAEMON="/opt/puppet-library/embedded/sbin/${NAME}"
+DAEMON="<%= project_name %>/embedded/sbin/${NAME}"
 
 # Absolute path to the configuration file.
-CONF_FILE="/etc/${NAME}/${NAME}.conf"
+CONF_FILE="<%= project_name %>/embedded/etc/${NAME}/${NAME}.conf"
 
 # Arguments that should be passed to the executable.
 DAEMON_ARGS=""
