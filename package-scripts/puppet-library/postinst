@@ -4,9 +4,9 @@
 #
 
 PROGNAME=$(basename $0)
-PKGNAME=$(basename)
-DEST_DIR="/opt/puppet-library"
-CONF_DIR="/etc/puppet-library"
+PKGNAME="puppet-library"
+DEST_DIR="/opt/$PKGNAME"
+CONF_DIR="/etc/$PKGNAME"
 MOD_DIR="/var/lib/modules"
 LOG_DIR="/var/log/$PKGNAME"
 NGINX_LOG_DIR="$LOG_DIR/nginx"

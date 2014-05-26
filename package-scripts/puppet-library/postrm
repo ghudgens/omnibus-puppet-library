@@ -5,9 +5,12 @@
 #
 
 PROGNAME=$(basename $0)
-DEST_DIR="/opt/puppet-library"
+PKGNAME="puppet-library"
+DEST_DIR="/opt/$PKGNAME"
+CONF_DIR="/etc/$PKGNAME"
 MOD_DIR="/var/lib/modules"
-LOG_DIR="/var/log/puppet-library"
+LOG_DIR="/var/log/$PKGNAME"
+NGINX_LOG_DIR="$LOG_DIR/nginx"
 
 function error_exit
 {
@@ -15,8 +18,6 @@ function error_exit
   exit 1
 }
 
-# Remove init script
-rm -f /etc/init.d/puppet-library
 # Remove installed directory
 rm -rf $DEST_DIR
 

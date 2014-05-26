@@ -5,9 +5,12 @@
 #
 
 PROGNAME=$(basename $0)
-DEST_DIR="/opt/puppet-library"
+PKGNAME="puppet-library"
+DEST_DIR="/opt/$PKGNAME"
+CONF_DIR="/etc/$PKGNAME"
 MOD_DIR="/var/lib/modules"
-LOG_DIR="/var/log/puppet-library"
+LOG_DIR="/var/log/$PKGNAME"
+NGINX_LOG_DIR="$LOG_DIR/nginx"
 
 function error_exit
 {
@@ -15,7 +18,7 @@ function error_exit
   exit 1
 }
 
-echo "Stopping puppet-library"
-/etc/init.d/puppet-library stop || error_exit "Cannot stop service"
+echo "Stopping nginx"
+$DEST_DIR/embedded/etc/init.d/nginx stop || error_exit "Cannot stop service"
 
 exit 0
