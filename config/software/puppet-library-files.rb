@@ -45,7 +45,7 @@ build do
   block do
     template_file = File.open("#{files_dir}/puppet-library.conf.nginx.erb", "r").read
     nginx_config = ERB.new(template_file)
-    File.open("#{install_dir}/embedded/etc/nginx/conf/conf.d/puppet-library.conf", "w") do |file|
+    File.open("#{install_dir}/embedded/etc/nginx/conf.d/puppet-library.conf", "w") do |file|
       file.print(nginx_config.result(binding))
     end
   end
