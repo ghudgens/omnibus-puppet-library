@@ -22,6 +22,10 @@ files_dir = File.expand_path("files/nginx", Omnibus.project_root)
 config_dir = "#{install_dir}/embedded/etc/nginx"
 init_dir = "#{install_dir}/embedded/etc/init.d"
 
+# Grab the ruby and passenger-gem components as we will be using them in the configure
+ruby_cmpt = project.library.components.find { |c| c.name == 'ruby' }
+pgem_cmpt = project.library.components.find { |c| c.name == 'passenger-gem' }
+
 if platform == "debian"
   init_script = "nginx.init.deb.erb"
 end
@@ -46,10 +50,10 @@ build do
     end
 
     unless init_script.nil?
-      command "rm -f #{init_dir}/nginx"
-      nginx_init = ERB.new(File.read("#{files_dir}/#{init_script}"))
+      template_file = File.open("#{files_dir}/#{init_script}", "r").read
+      nginx_init = ERB.new(template_file)
       File.open("#{init_dir}/nginx", "w") do |file|
-        file.print(nginx_init)
+        file.print(nginx_init.result(binding))
       end
     end
   end

@@ -8,7 +8,8 @@ PKGNAME=$(basename)
 DEST_DIR="/opt/puppet-library"
 CONF_DIR="/etc/puppet-library"
 MOD_DIR="/var/lib/modules"
-NGINX_LOG_DIR="/var/log/puppet-library"
+LOG_DIR="/var/log/$PKGNAME"
+NGINX_LOG_DIR="$LOG_DIR/nginx"
 
 function error_exit
 {
@@ -24,31 +25,9 @@ if ! getent passwd nginx > /dev/null; then
     nginx
 fi
 
-# Move puppet-library configs
-if [ ! -d $CONF_DIR ]; then
-  echo "Generating puppet-library config"
-  mv $DEST_DIR/embedded/etc/puppet-library $CONF_DIR || error_exit "Cannot move $DEST_DIR/embedded/etc/puppet-library to $CONF_DIR"
-fi
-
-# Move nginx configs
-if [ ! -d /etc/nginx ]; then
-  echo "Generating nginx configs"
-  mv $DEST_DIR/embedded/etc/nginx /etc/nginx || error_exit "Cannot move $DEST_DIR/embedded/etc/nginx to /etc/nginx"
-fi
-
-# Move init script
-if [ -e $DEST_DIR/embedded/etc/init.d/nginx ]; then
-  echo "Creating /etc/init.d/nginx file"
-  rm -f /etc/init.d/puppet-library
-  mv $DEST_DIR/embedded/etc/init.d/nginx /etc/init.d/nginx || error_exit "Cannot move $DEST_DIR/embedded/etc/init.d/nginx to /etc/init.d/nginx"
-  chmod 755 /etc/init.d/nginx
-fi
-
 # Create module directory
 echo "Creating var directories"
 mkdir -m 755 -p $MOD_DIR || error_exit "Cannot create $MOD_DIR"
-# Set correct ownership of puppet directories
-chown nginx:nginx $MOD_DIR || error_exit "Cannot change permissions of $MOD_DIR"
 
 # Create log directory
 echo "Creating log directories"

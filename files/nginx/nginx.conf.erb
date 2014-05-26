@@ -2,7 +2,7 @@ user  nginx;
 
 worker_processes  1;
 
-error_log  /var/log/<%= @project_name %>/nginx/error.log;
+error_log  /var/log/<%= project_name %>/nginx/error.log;
 error_log  /var/log/<%= project_name %>/nginx/error.log  notice;
 error_log  /var/log/<%= project_name %>/nginx/error.log  info;
 
@@ -23,7 +23,7 @@ http {
 
     keepalive_timeout  65;
 
-    passenger_root  <%= @install_dir  %>/embedded/lib/ruby/gems/2.0.0/gems/passenger-4.0.42;
+    passenger_root  <%= install_dir  %>/embedded/lib/ruby/gems/<%= "#{ruby_cmpt.version.split("-p")[0]}/gems/passenger-#{pgem_cmpt.version}"  %>;
     passenger_ruby  <%= install_dir  %>/embedded/bin/ruby;
     passenger_max_pool_size 15;
 
@@ -31,7 +31,7 @@ http {
         listen       *:80;
         server_name  localhost;
 
-        root /opt/puppet-library/embedded/share/puppet-library/public;
+        root <%= install_dir  %>/embedded/share/<%= project_name %>/public;
 
         passenger_enabled on;
 

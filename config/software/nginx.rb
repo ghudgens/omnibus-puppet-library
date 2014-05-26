@@ -54,10 +54,6 @@ pgem_cmpt = project.library.components.find { |c| c.name == 'passenger-gem' }
 build do
   configure_command = ["./configure",
                        "--prefix=#{install_dir}/embedded",
-                       "--conf-path=#{install_dir}/embedded/etc/nginx/nginx.conf",
-                       "--pid-path=/var/run/nginx.pid",
-                       "--error-log-path=/var/log/nginx/error.log",
-                       "--http-log-path=/var/log/nginx/access.log",
                        "--with-http_ssl_module",
                        "--with-http_stub_status_module",
                        "--with-http_gzip_static_module",
