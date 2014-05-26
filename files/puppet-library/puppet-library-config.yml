@@ -1,3 +1,0 @@
-forges:
-    - Directory: /var/lib/modules
-    - Proxy: http://forge.puppetlabs.com
