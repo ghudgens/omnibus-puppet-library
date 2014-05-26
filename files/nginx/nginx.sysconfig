@@ -1,4 +1,0 @@
-# Configuration file for the nginx service.
-NGINX=/opt/puppet-library/embedded/sbin/nginx
-CONFFILE=/opt/puppet-library/embedded/etc/nginx/nginx.conf
-LOCKFILE=/var/lock/subsys/nginx

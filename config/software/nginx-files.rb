@@ -34,7 +34,7 @@ config_script = "nginx.conf.erb"
 
 build do
   # Create directory structure.
-  command "mkdir -p #{config_dir}/sysconfig"
+  command "mkdir -p #{config_dir}"
   command "mkdir -p #{init_dir}"
 
   # Create config file and init script
