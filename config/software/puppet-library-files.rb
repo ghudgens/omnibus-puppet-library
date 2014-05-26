@@ -32,7 +32,7 @@ project_name = project.name
 build do
   # Create puppet-library config directory.
   command "mkdir -p #{config_dir}"
-  command "cp -a #{files_dir}/puppet-library-config.yml #{webapp_dir}/"
+  command "cp -a #{files_dir}/puppet-library-config.yml #{config_dir}/"
 
   # Generate webapp directory and copy over config.
   command "mkdir -p #{webapp_dir}"
