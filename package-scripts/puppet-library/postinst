@@ -36,6 +36,12 @@ touch $NGINX_LOG_DIR/error.log || error_exit "Cannot create $NGINX_LOG_DIR/error
 touch $NGINX_LOG_DIR/access.log || error_exit "Cannot create $NGINX_LOG_DIR/access.log"
 chown -R nginx:nginx $NGINX_LOG_DIR || error_exit "Cannot change permissions of $NGINX_LOG_DIR"
 
+if [ ! -e /etc/init.d/nginx ] ; then
+  echo "Creating /etc/init.d/nginx file"
+  mv $DEST_DIR/embedded/etc/init.d/nginx /etc/init.d/nginx || error_exit "Cannot move $DEST_DIR/embedded/etc/init.d/nginx to /etc/init.d/nginx"
+fi
+chmod 755 /etc/init.d/nginx
+
 echo "Thank you for installing ${PKGNAME}!"
 
 exit 0
